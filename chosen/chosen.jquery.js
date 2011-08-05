@@ -955,10 +955,57 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.no_results = function(terms) {
-      var no_results_html;
-      no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
+      var no_results_html, option, regex, selected,
+        _this = this;
+      if (this.options.addOption) {
+        no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>". <a href="javascript:void(0);" class="option-add">Add this item</a></li>');
+      } else {
+        no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
+      }
       no_results_html.find("span").first().html(terms);
+      regex = new RegExp('^' + terms + '$', 'i');
+      selected = (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.results_data;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          option = _ref[_i];
+          if (regex.test(option.value) && option.selected) {
+            _results.push(option);
+          }
+        }
+        return _results;
+      }).call(this);
+      if (selected.length === 0) {
+        no_results_html.append(' <a href="javascript:void(0);" class="option-add">Add this item</a>');
+        no_results_html.find("a.option-add").bind("click", function(evt) {
+          return _this.select_add_option(terms);
+        });
+      }
       return this.search_results.append(no_results_html);
+    };
+
+    Chosen.prototype.select_add_option = function(terms) {
+      var new_option_html;
+      if ($.isFunction(this.options.addOption)) {
+        return this.options.addOption.call(this, terms, this.select_append_option);
+      } else {
+        new_option_html = $('<option />', {
+          value: terms
+        }).text(terms);
+        return this.select_append_option(new_option_html);
+      }
+    };
+
+    Chosen.prototype.select_append_option = function(option) {
+      var terms;
+      this.form_field_jq.append(option);
+      terms = this.search_field.val();
+      this.form_field_jq.trigger("liszt:updated");
+      $(this.search_field).val(terms);
+      this.search_field.trigger("keyup");
+      this.form_field_jq.trigger("change");
+      return this.result_select();
     };
 
     Chosen.prototype.no_results_clear = function() {
