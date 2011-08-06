@@ -863,9 +863,10 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.winnow_results = function() {
-      var found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, startpos, text, zregex, _i, _j, _len, _len1, _ref;
+      var found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, selected, startpos, text, zregex, _i, _j, _len, _len1, _ref;
       this.no_results_clear();
       results = 0;
+      selected = false;
       searchText = this.search_field.val() === this.default_text ? "" : $('<div/>').text($.trim(this.search_field.val())).html();
       regexAnchor = this.search_contains ? "" : "^";
       regex = new RegExp(regexAnchor + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
@@ -914,11 +915,15 @@ Copyright (c) 2011 by Harvest
               }
               this.result_deactivate(result);
             }
+          } else if (this.is_multiple && option.selected) {
+            if (regex.test(option.html)) {
+              selected = true;
+            }
           }
         }
       }
       if (results < 1 && searchText.length) {
-        return this.no_results(searchText);
+        return this.no_results(searchText, selected);
       } else {
         return this.winnow_results_set_highlight();
       }
@@ -955,28 +960,11 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.no_results = function(terms) {
-      var no_results_html, option, regex, selected,
+      var no_results_html,
         _this = this;
-      if (this.options.addOption) {
-        no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>". <a href="javascript:void(0);" class="option-add">Add this item</a></li>');
-      } else {
-        no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
-      }
+      no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
       no_results_html.find("span").first().html(terms);
-      regex = new RegExp('^' + terms + '$', 'i');
-      selected = (function() {
-        var _i, _len, _ref, _results;
-        _ref = this.results_data;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          option = _ref[_i];
-          if (regex.test(option.value) && option.selected) {
-            _results.push(option);
-          }
-        }
-        return _results;
-      }).call(this);
-      if (selected.length === 0) {
+      if (!selected) {
         no_results_html.append(' <a href="javascript:void(0);" class="option-add">Add this item</a>');
         no_results_html.find("a.option-add").bind("click", function(evt) {
           return _this.select_add_option(terms);

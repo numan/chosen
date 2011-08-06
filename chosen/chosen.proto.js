@@ -863,9 +863,10 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.winnow_results = function() {
-      var found, option, part, parts, regex, regexAnchor, result_id, results, searchText, startpos, text, zregex, _i, _j, _len, _len1, _ref;
+      var found, option, part, parts, regex, regexAnchor, result_id, results, searchText, selected, startpos, text, zregex, _i, _j, _len, _len1, _ref;
       this.no_results_clear();
       results = 0;
+      selected = false;
       searchText = this.search_field.value === this.default_text ? "" : this.search_field.value.strip().escapeHTML();
       regexAnchor = this.search_contains ? "" : "^";
       regex = new RegExp(regexAnchor + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
@@ -917,11 +918,15 @@ Copyright (c) 2011 by Harvest
               }
               this.result_deactivate($(result_id));
             }
+          } else if (this.is_multiple && option.selected) {
+            if (regex.test(option.html)) {
+              selected = true;
+            }
           }
         }
       }
       if (results < 1 && searchText.length) {
-        return this.no_results(searchText);
+        return this.no_results(searchText, selected);
       } else {
         return this.winnow_results_set_highlight();
       }
@@ -981,11 +986,11 @@ Copyright (c) 2011 by Harvest
         terms: terms,
         add_item_link: add_item_link
       }));
-      if (selected.length === 0) {
-        return this.search_results.down("a.option-add").observe("click", function(evt) {
+      return this.search_results.down("a.option-add").observe("click", function(evt) {
+        if (!selected) {
           return _this.select_add_option(terms);
-        });
-      }
+        }
+      });
     };
 
     Chosen.prototype.select_add_option = function(terms) {
