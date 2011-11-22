@@ -362,7 +362,7 @@ Copyright (c) 2011 by Harvest
       this.no_results_temp = new Template('<li class="no-results">' + this.results_none_found + ' "<span>#{terms}</span>".#{add_item_link}</li>');
       this.new_option_html = new Template('<option value="#{terms}">#{terms}</option>');
       this.new_option_temp = new Template('<option value="#{value}">#{text}</option>');
-      return this.add_link_temp = new Template(' <a href="javascript:void(0);" class="option-add">#{text}</a>');
+      return this.add_link_temp = new Template(' <a href="javascript:void(0);" class="option-add">' + this.add_option_text + '</a>');
     };
 
     Chosen.prototype.set_up_html = function() {
@@ -972,10 +972,8 @@ Copyright (c) 2011 by Harvest
       var add_item_link,
         _this = this;
       add_item_link = '';
-      if (this.options.addOption && !selected) {
-        add_item_link = this.add_link_temp.evaluate({
-          text: 'Add this item'
-        });
+      if (this.add_option && !selected) {
+        add_item_link = this.add_link_temp.evaluate();
       }
       this.search_results.insert(this.no_results_temp.evaluate({
         terms: terms,
@@ -991,8 +989,8 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.select_add_option = function(terms) {
-      if (Object.isFunction(this.options.addOption)) {
-        return this.options.addOption.call(this, terms, this.select_append_option);
+      if (Object.isFunction(this.add_option)) {
+        return this.add_option.call(this, terms, this.select_append_option);
       } else {
         return this.select_append_option({
           value: terms,
