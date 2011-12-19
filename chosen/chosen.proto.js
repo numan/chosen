@@ -212,6 +212,10 @@ Copyright (c) 2011 by Harvest
       }
     };
 
+    AbstractChosen.prototype.append_option = function(option) {
+      return this.select_append_option(option);
+    };
+
     AbstractChosen.prototype.results_update_field = function() {
       this.set_default_text();
       if (!this.is_multiple) {
@@ -363,9 +367,8 @@ Copyright (c) 2011 by Harvest
       this.choice_temp = new Template('<li class="search-choice" id="#{id}"><span>#{choice}</span><a href="javascript:void(0)" class="search-choice-close" rel="#{position}"></a></li>');
       this.choice_noclose_temp = new Template('<li class="search-choice search-choice-disabled" id="#{id}"><span>#{choice}</span></li>');
       this.no_results_temp = new Template('<li class="no-results">' + this.results_none_found + ' "<span>#{terms}</span>".#{add_item_link}</li>');
-      this.new_option_html = new Template('<option value="#{terms}">#{terms}</option>');
       this.new_option_temp = new Template('<option value="#{value}">#{text}</option>');
-      return this.add_link_temp = new Template(' <a href="javascript:void(0);" class="option-add">' + this.add_option_text + '</a>');
+      return this.add_link_temp = new Template(' <a href="javascript:void(0);" class="option-add">' + this.create_option_text + '</a>');
     };
 
     Chosen.prototype.set_up_html = function() {
@@ -972,28 +975,20 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.no_results = function(terms, selected) {
-      var add_item_link,
-        _this = this;
+      var add_item_link;
       add_item_link = '';
       if (this.add_option && !selected) {
         add_item_link = this.add_link_temp.evaluate();
       }
-      this.search_results.insert(this.no_results_temp.evaluate({
+      return this.search_results.insert(this.no_results_temp.evaluate({
         terms: terms,
         add_item_link: add_item_link
       }));
-      if (this.options.addOption && !selected) {
-        return this.search_results.down("a.option-add").observe("click", function(evt) {
-          if (!selected) {
-            return _this.select_add_option(terms);
-          }
-        });
-      }
     };
 
-    Chosen.prototype.select_add_option = function(terms) {
-      if (Object.isFunction(this.add_option)) {
-        return this.add_option.call(this, terms, this.select_append_option);
+    Chosen.prototype.select_create_option = function(terms) {
+      if (Object.isFunction(this.create_option)) {
+        return this.create_option.call(this, terms);
       } else {
         return this.select_append_option({
           value: terms,
@@ -1008,10 +1003,7 @@ Copyright (c) 2011 by Harvest
       */
 
       var option;
-      option = this.new_option_temp.evaluate({
-        value: options.value,
-        text: options.text
-      });
+      option = this.new_option_temp.evaluate(options);
       this.form_field.insert(option);
       Event.fire(this.form_field, "liszt:updated");
       return this.result_select();
