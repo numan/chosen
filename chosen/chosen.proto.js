@@ -368,7 +368,7 @@ Copyright (c) 2011 by Harvest
       this.choice_noclose_temp = new Template('<li class="search-choice search-choice-disabled" id="#{id}"><span>#{choice}</span></li>');
       this.no_results_temp = new Template('<li class="no-results">' + this.results_none_found + ' "<span>#{terms}</span>".</li>');
       this.new_option_temp = new Template('<option value="#{value}">#{text}</option>');
-      return this.create_option_temp = new Template('<li class="create-option"><a href="javascript:void(0);">#{text}</a>: #{terms}</li>');
+      return this.create_option_temp = new Template('<li class="create-option active-result"><a href="javascript:void(0);">#{text}</a>: "#{terms}"</li>');
     };
 
     Chosen.prototype.set_up_html = function() {
@@ -574,10 +574,10 @@ Copyright (c) 2011 by Harvest
         this.choices = 0;
       } else if (!this.is_multiple) {
         this.selected_item.addClassName("chzn-default").down("span").update(this.default_text);
-        if (this.disable_search || this.form_field.options.length <= this.disable_search_threshold) {
-          this.container.addClassName("chzn-container-single-nosearch");
-        } else {
+        if (this.create_option && !this.disable_search) {
           this.container.removeClassName("chzn-container-single-nosearch");
+        } else if (this.disable_search || this.form_field.options.length <= this.disable_search_threshold) {
+          this.container.addClassName("chzn-container-single-nosearch");
         }
       }
       content = '';
@@ -981,8 +981,7 @@ Copyright (c) 2011 by Harvest
     Chosen.prototype.no_results = function(terms) {
       var no_results_html;
       no_results_html = this.no_results_temp.evaluate({
-        terms: terms,
-        text: this.results_none_found
+        terms: terms
       });
       this.search_results.insert(no_results_html);
       if (this.create_option) {
