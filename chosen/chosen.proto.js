@@ -801,6 +801,10 @@ Copyright (c) 2011 by Harvest
       var high, item, position;
       if (this.result_highlight) {
         high = this.result_highlight;
+        if (high.hasClassName('create-option')) {
+          this.select_create_option(this.search_field.value);
+          return this.results_hide();
+        }
         this.result_clear_highlight();
         if (this.is_multiple) {
           this.result_deactivate(high);

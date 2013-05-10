@@ -455,11 +455,9 @@ class Chosen extends AbstractChosen
           else
             this.result_clear_highlight() if @result_highlight and result_id is @result_highlight.attr 'id'
             this.result_deactivate result
-        else if (@is_multiple and option.selected)
-          selected = true if exactRegex.test option.html
 
     if results < 1 and searchText.length
-      this.no_results searchText, selected
+      this.no_results searchText
     else
       this.show_create_option( searchText ) if @create_option and not exact_result and @persistent_create_option and searchText.length
       this.winnow_results_set_highlight()

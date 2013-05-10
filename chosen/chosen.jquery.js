@@ -932,15 +932,11 @@ Copyright (c) 2011 by Harvest
               }
               this.result_deactivate(result);
             }
-          } else if (this.is_multiple && option.selected) {
-            if (exactRegex.test(option.html)) {
-              selected = true;
-            }
           }
         }
       }
       if (results < 1 && searchText.length) {
-        return this.no_results(searchText, selected);
+        return this.no_results(searchText);
       } else {
         if (this.create_option && !exact_result && this.persistent_create_option && searchText.length) {
           this.show_create_option(searchText);
