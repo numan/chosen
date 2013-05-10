@@ -147,14 +147,14 @@ Copyright (c) 2011 by Harvest
     };
 
     AbstractChosen.prototype.set_default_text = function() {
-      if (this.form_field.data("placeholder")) {
-        this.default_text = this.form_field.data("placeholder");
+      if (this.form_field.getAttribute("data-placeholder")) {
+        this.default_text = this.form_field.getAttribute("data-placeholder");
       } else if (this.is_multiple) {
         this.default_text = this.options.placeholder_text_multiple || this.options.placeholder_text || AbstractChosen.default_multiple_text;
       } else {
         this.default_text = this.options.placeholder_text_single || this.options.placeholder_text || AbstractChosen.default_single_text;
       }
-      this.results_none_found = this.form_field.data("no_results_text") || this.options.no_results_text || AbstractChosen.default_no_result_text;
+      this.results_none_found = this.form_field.getAttribute("data-no_results_text") || this.options.no_results_text || AbstractChosen.default_no_result_text;
       return this.create_option_text = this.options.create_option_text || "Add option";
     };
 
