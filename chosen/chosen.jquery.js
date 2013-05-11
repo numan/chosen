@@ -799,7 +799,7 @@ Copyright (c) 2011 by Harvest
       var high, high_id, item, position;
       if (this.result_highlight) {
         high = this.result_highlight;
-        if (high.hasClass('create-option')) {
+        if (high.hasClass("create-option")) {
           this.select_create_option(this.search_field.val());
           return this.results_hide();
         }
@@ -874,17 +874,16 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.winnow_results = function() {
-      var eregex, exact_result, found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, selected, startpos, text, zregex, _i, _j, _len, _len1, _ref;
+      var eregex, exact_result, found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, startpos, text, zregex, _i, _j, _len, _len1, _ref;
       this.no_results_clear();
       this.create_option_clear();
       results = 0;
-      selected = false;
+      exact_result = false;
       searchText = this.search_field.val() === this.default_text ? "" : $('<div/>').text($.trim(this.search_field.val())).html();
       regexAnchor = this.search_contains ? "" : "^";
       regex = new RegExp(regexAnchor + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
       zregex = new RegExp(searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
       eregex = new RegExp('^' + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") + '$', 'i');
-      exact_result = false;
       _ref = this.results_data;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         option = _ref[_i];
@@ -936,12 +935,12 @@ Copyright (c) 2011 by Harvest
         }
       }
       if (results < 1 && searchText.length) {
-        return this.no_results(searchText);
+        this.no_results(searchText);
       } else {
-        if (this.create_option && !exact_result && this.persistent_create_option && searchText.length) {
-          this.show_create_option(searchText);
-        }
-        return this.winnow_results_set_highlight();
+        this.winnow_results_set_highlight();
+      }
+      if (this.create_option && (results < 1 || (exact_result && this.persistent_create_option)) && searchText.length) {
+        return this.show_create_option(searchText);
       }
     };
 
@@ -979,10 +978,7 @@ Copyright (c) 2011 by Harvest
       var no_results_html;
       no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
       no_results_html.find("span").first().html(terms);
-      this.search_results.append(no_results_html);
-      if (this.create_option) {
-        return this.show_create_option(terms);
-      }
+      return this.search_results.append(no_results_html);
     };
 
     Chosen.prototype.show_create_option = function(terms) {

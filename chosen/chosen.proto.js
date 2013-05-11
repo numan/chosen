@@ -801,7 +801,7 @@ Copyright (c) 2011 by Harvest
       var high, item, position;
       if (this.result_highlight) {
         high = this.result_highlight;
-        if (high.hasClassName('create-option')) {
+        if (high.hasClassName("create-option")) {
           this.select_create_option(this.search_field.value);
           return this.results_hide();
         }
@@ -879,12 +879,12 @@ Copyright (c) 2011 by Harvest
       this.no_results_clear();
       this.create_option_clear();
       results = 0;
+      exact_result = false;
       searchText = this.search_field.value === this.default_text ? "" : this.search_field.value.strip().escapeHTML();
       regexAnchor = this.search_contains ? "" : "^";
       regex = new RegExp(regexAnchor + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
       zregex = new RegExp(searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
       eregex = new RegExp('^' + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") + '$', 'i');
-      exact_result = false;
       _ref = this.results_data;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         option = _ref[_i];
@@ -940,12 +940,12 @@ Copyright (c) 2011 by Harvest
         }
       }
       if (results < 1 && searchText.length) {
-        return this.no_results(searchText);
+        this.no_results(searchText);
       } else {
-        if (this.create_option && !exact_result && this.persistent_create_option && searchText.length) {
-          this.show_create_option(searchText);
-        }
-        return this.winnow_results_set_highlight();
+        this.winnow_results_set_highlight();
+      }
+      if (this.create_option && (results < 1 || (exact_result && this.persistent_create_option)) && searchText.length) {
+        return this.show_create_option(searchText);
       }
     };
 
@@ -987,10 +987,7 @@ Copyright (c) 2011 by Harvest
       no_results_html = this.no_results_temp.evaluate({
         terms: terms
       });
-      this.search_results.insert(no_results_html);
-      if (this.create_option) {
-        return this.show_create_option(terms);
-      }
+      return this.search_results.insert(no_results_html);
     };
 
     Chosen.prototype.show_create_option = function(terms) {
