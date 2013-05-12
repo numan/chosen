@@ -939,7 +939,7 @@ Copyright (c) 2011 by Harvest
       } else {
         this.winnow_results_set_highlight();
       }
-      if (this.create_option && (results < 1 || (exact_result && this.persistent_create_option)) && searchText.length) {
+      if (this.create_option && (results < 1 || (!exact_result && this.persistent_create_option)) && searchText.length) {
         return this.show_create_option(searchText);
       }
     };
