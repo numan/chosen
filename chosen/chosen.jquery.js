@@ -143,7 +143,8 @@ Copyright (c) 2011 by Harvest
       this.max_selected_options = this.options.max_selected_options || Infinity;
       this.inherit_select_classes = this.options.inherit_select_classes || false;
       this.create_option = this.options.create_option || false;
-      return this.persistent_create_option = this.options.persistent_create_option || false;
+      this.persistent_create_option = this.options.persistent_create_option || false;
+      return this.skip_no_results = this.options.skip_no_results || false;
     };
 
     AbstractChosen.prototype.set_default_text = function() {
@@ -935,7 +936,9 @@ Copyright (c) 2011 by Harvest
         }
       }
       if (results < 1 && searchText.length) {
-        this.no_results(searchText);
+        if (!(this.create_option && this.skip_no_results)) {
+          this.no_results(searchText);
+        }
       } else {
         this.winnow_results_set_highlight();
       }
