@@ -155,7 +155,7 @@ Copyright (c) 2011 by Harvest
         this.default_text = this.options.placeholder_text_single || this.options.placeholder_text || AbstractChosen.default_single_text;
       }
       this.results_none_found = this.form_field.getAttribute("data-no_results_text") || this.options.no_results_text || AbstractChosen.default_no_result_text;
-      return this.create_option_text = this.options.create_option_text || "Add option";
+      return this.create_option_text = this.form_field.getAttribute("data-create_option_text") || this.options.create_option_text || AbstractChosen.default_create_option_text;
     };
 
     AbstractChosen.prototype.mouse_enter = function() {
@@ -321,6 +321,8 @@ Copyright (c) 2011 by Harvest
     AbstractChosen.default_single_text = "Select an Option";
 
     AbstractChosen.default_no_result_text = "No results match";
+
+    AbstractChosen.default_create_option_text = "Add Option";
 
     return AbstractChosen;
 
