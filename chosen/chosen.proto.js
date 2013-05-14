@@ -11,7 +11,6 @@
   var SelectParser;
 
   SelectParser = (function() {
-
     function SelectParser() {
       this.options_index = 0;
       this.parsed = [];
@@ -27,6 +26,7 @@
 
     SelectParser.prototype.add_group = function(group) {
       var group_position, option, _i, _len, _ref, _results;
+
       group_position = this.parsed.length;
       this.parsed.push({
         array_index: group_position,
@@ -79,6 +79,7 @@
 
   SelectParser.select_to_array = function(select) {
     var child, parser, _i, _len, _ref;
+
     parser = new SelectParser();
     _ref = select.childNodes;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -91,7 +92,6 @@
   this.SelectParser = SelectParser;
 
 }).call(this);
-
 /*
 Chosen source: generate output using 'cake build'
 Copyright (c) 2011 by Harvest
@@ -104,7 +104,6 @@ Copyright (c) 2011 by Harvest
   root = this;
 
   AbstractChosen = (function() {
-
     function AbstractChosen(form_field, options) {
       this.form_field = form_field;
       this.options = options != null ? options : {};
@@ -122,6 +121,7 @@ Copyright (c) 2011 by Harvest
 
     AbstractChosen.prototype.set_default_values = function() {
       var _this = this;
+
       this.click_test_action = function(evt) {
         return _this.test_active_click(evt);
       };
@@ -143,7 +143,8 @@ Copyright (c) 2011 by Harvest
       this.max_selected_options = this.options.max_selected_options || Infinity;
       this.inherit_select_classes = this.options.inherit_select_classes || false;
       this.create_option = this.options.create_option || false;
-      return this.persistent_create_option = this.options.persistent_create_option || false;
+      this.persistent_create_option = this.options.persistent_create_option || false;
+      return this.skip_no_results = this.options.skip_no_results || false;
     };
 
     AbstractChosen.prototype.set_default_text = function() {
@@ -168,6 +169,7 @@ Copyright (c) 2011 by Harvest
 
     AbstractChosen.prototype.input_focus = function(evt) {
       var _this = this;
+
       if (this.is_multiple) {
         if (!this.active_field) {
           return setTimeout((function() {
@@ -183,6 +185,7 @@ Copyright (c) 2011 by Harvest
 
     AbstractChosen.prototype.input_blur = function(evt) {
       var _this = this;
+
       if (!this.mouse_on_container) {
         this.active_field = false;
         return setTimeout((function() {
@@ -193,6 +196,7 @@ Copyright (c) 2011 by Harvest
 
     AbstractChosen.prototype.result_add_option = function(option) {
       var classes, style;
+
       if (!option.disabled) {
         option.dom_id = this.container_id + "_o_" + option.array_index;
         classes = option.selected && this.is_multiple ? [] : ["active-result"];
@@ -251,6 +255,7 @@ Copyright (c) 2011 by Harvest
 
     AbstractChosen.prototype.keyup_checker = function(evt) {
       var stroke, _ref;
+
       stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
       this.search_field_scale();
       switch (stroke) {
@@ -287,6 +292,7 @@ Copyright (c) 2011 by Harvest
 
     AbstractChosen.prototype.generate_field_id = function() {
       var new_id;
+
       new_id = this.generate_random_id();
       this.form_field.id = new_id;
       return new_id;
@@ -294,6 +300,7 @@ Copyright (c) 2011 by Harvest
 
     AbstractChosen.prototype.generate_random_char = function() {
       var chars, newchar, rand;
+
       chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
       rand = Math.floor(Math.random() * chars.length);
       return newchar = chars.substring(rand, rand + 1);
@@ -301,6 +308,7 @@ Copyright (c) 2011 by Harvest
 
     AbstractChosen.prototype.container_width = function() {
       var width;
+
       if (this.options.width != null) {
         return this.options.width;
       }
@@ -310,6 +318,7 @@ Copyright (c) 2011 by Harvest
 
     AbstractChosen.browser_is_supported = function() {
       var _ref;
+
       if (window.navigator.appName === "Microsoft Internet Explorer") {
         return (null !== (_ref = document.documentMode) && _ref >= 8);
       }
@@ -322,6 +331,8 @@ Copyright (c) 2011 by Harvest
 
     AbstractChosen.default_no_result_text = "No results match";
 
+    AbstractChosen.default_create_option_text = "Add Option";
+
     return AbstractChosen;
 
   })();
@@ -329,7 +340,6 @@ Copyright (c) 2011 by Harvest
   root.AbstractChosen = AbstractChosen;
 
 }).call(this);
-
 /*
 Chosen source: generate output using 'cake build'
 Copyright (c) 2011 by Harvest
@@ -337,18 +347,18 @@ Copyright (c) 2011 by Harvest
 
 
 (function() {
-  var Chosen, root,
+  var Chosen, root, _ref,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   root = this;
 
   Chosen = (function(_super) {
-
     __extends(Chosen, _super);
 
     function Chosen() {
-      return Chosen.__super__.constructor.apply(this, arguments);
+      _ref = Chosen.__super__.constructor.apply(this, arguments);
+      return _ref;
     }
 
     Chosen.prototype.setup = function() {
@@ -373,6 +383,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.set_up_html = function() {
       var container_classes, container_props;
+
       this.container_id = this.form_field.identify().replace(/[^\w]/g, '_') + "_chzn";
       container_classes = ["chzn-container"];
       container_classes.push("chzn-container-" + (this.is_multiple ? "multi" : "single"));
@@ -418,6 +429,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.register_observers = function() {
       var _this = this;
+
       this.container.observe("mousedown", function(evt) {
         return _this.container_mousedown(evt);
       });
@@ -523,6 +535,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.search_results_mousewheel = function(evt) {
       var delta;
+
       delta = -evt.wheelDelta || evt.detail;
       if (delta != null) {
         evt.preventDefault();
@@ -566,7 +579,8 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.results_build = function() {
-      var content, data, _i, _len, _ref;
+      var content, data, _i, _len, _ref1;
+
       this.parsing = true;
       this.results_data = root.SelectParser.select_to_array(this.form_field);
       if (this.is_multiple && this.choices > 0) {
@@ -581,9 +595,9 @@ Copyright (c) 2011 by Harvest
         }
       }
       content = '';
-      _ref = this.results_data;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        data = _ref[_i];
+      _ref1 = this.results_data;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        data = _ref1[_i];
         if (data.group) {
           content += this.result_add_group(data);
         } else if (!data.empty) {
@@ -616,6 +630,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.result_do_highlight = function(el) {
       var high_bottom, high_top, maxHeight, visible_bottom, visible_top;
+
       this.result_clear_highlight();
       this.result_highlight = el;
       this.result_highlight.addClassName("highlighted");
@@ -668,6 +683,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.set_tab_index = function(el) {
       var ti;
+
       if (this.form_field.tabIndex) {
         ti = this.form_field.tabIndex;
         this.form_field.tabIndex = -1;
@@ -677,8 +693,9 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.set_label_behavior = function() {
       var _this = this;
+
       this.form_field_label = this.form_field.up("label");
-      if (!(this.form_field_label != null)) {
+      if (this.form_field_label == null) {
         this.form_field_label = $$("label[for=" + this.form_field.id + "]").first();
       }
       if (this.form_field_label != null) {
@@ -704,6 +721,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.search_results_mouseup = function(evt) {
       var target;
+
       target = evt.target.hasClassName("active-result") ? evt.target : evt.target.up(".active-result");
       if (target) {
         this.result_highlight = target;
@@ -714,6 +732,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.search_results_mouseover = function(evt) {
       var target;
+
       target = evt.target.hasClassName("active-result") ? evt.target : evt.target.up(".active-result");
       if (target) {
         return this.result_do_highlight(target);
@@ -729,6 +748,7 @@ Copyright (c) 2011 by Harvest
     Chosen.prototype.choice_build = function(item) {
       var choice_id, link,
         _this = this;
+
       if (this.is_multiple && this.max_selected_options <= this.choices) {
         this.form_field.fire("liszt:maxselected", {
           chosen: this
@@ -790,6 +810,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.results_reset_cleanup = function() {
       var deselect_trigger;
+
       this.current_selectedIndex = this.form_field.selectedIndex;
       deselect_trigger = this.selected_item.down("abbr");
       if (deselect_trigger) {
@@ -799,6 +820,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.result_select = function(evt) {
       var high, item, position;
+
       if (this.result_highlight) {
         high = this.result_highlight;
         if (high.hasClassName('create-option')) {
@@ -848,6 +870,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.result_deselect = function(pos) {
       var result, result_data;
+
       result_data = this.results_data[pos];
       if (!this.form_field.options[result_data.options_index].disabled) {
         result_data.selected = false;
@@ -875,7 +898,8 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.winnow_results = function() {
-      var eregex, exact_result, found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, startpos, text, zregex, _i, _j, _len, _len1, _ref;
+      var eregex, exact_result, found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, startpos, text, zregex, _i, _j, _len, _len1, _ref1;
+
       this.no_results_clear();
       this.create_option_clear();
       results = 0;
@@ -885,9 +909,9 @@ Copyright (c) 2011 by Harvest
       zregex = new RegExp(searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
       eregex = new RegExp('^' + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") + '$', 'i');
       exact_result = false;
-      _ref = this.results_data;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        option = _ref[_i];
+      _ref1 = this.results_data;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        option = _ref1[_i];
         if (!option.disabled && !option.empty) {
           if (option.group) {
             $(option.dom_id).hide();
@@ -951,6 +975,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.winnow_results_clear = function() {
       var li, lis, _i, _len, _results;
+
       this.search_field.clear();
       lis = this.search_results.select("li");
       _results = [];
@@ -969,11 +994,12 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.winnow_results_set_highlight = function() {
       var do_high;
+
       if (!this.result_highlight) {
         if (!this.is_multiple) {
           do_high = this.search_results.down(".result-selected.active-result");
         }
-        if (!(do_high != null)) {
+        if (do_high == null) {
           do_high = this.search_results.down(".active-result");
         }
         if (do_high != null) {
@@ -984,6 +1010,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.no_results = function(terms) {
       var no_results_html;
+
       no_results_html = this.no_results_temp.evaluate({
         terms: terms
       });
@@ -996,6 +1023,7 @@ Copyright (c) 2011 by Harvest
     Chosen.prototype.show_create_option = function(terms) {
       var create_option_html,
         _this = this;
+
       create_option_html = this.create_option_temp.evaluate({
         terms: terms,
         text: this.create_option_text
@@ -1008,6 +1036,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.create_option_clear = function() {
       var co, _results;
+
       co = null;
       _results = [];
       while (co = this.search_results.down(".create-option")) {
@@ -1029,6 +1058,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.select_append_option = function(options) {
       var option;
+
       option = this.new_option_temp.evaluate(options);
       this.form_field.insert(option);
       Event.fire(this.form_field, "liszt:updated");
@@ -1037,6 +1067,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.no_results_clear = function() {
       var nr, _results;
+
       nr = null;
       _results = [];
       while (nr = this.search_results.down(".no-results")) {
@@ -1047,6 +1078,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.keydown_arrow = function() {
       var actives, nexts, sibs;
+
       actives = this.search_results.select("li.active-result");
       if (actives.length) {
         if (!this.result_highlight) {
@@ -1066,6 +1098,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.keyup_arrow = function() {
       var actives, prevs, sibs;
+
       if (!this.results_showing && !this.is_multiple) {
         return this.results_show();
       } else if (this.result_highlight) {
@@ -1085,6 +1118,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.keydown_backstroke = function() {
       var next_available_destroy;
+
       if (this.pending_backstroke) {
         this.choice_destroy(this.pending_backstroke.down("a"));
         return this.clear_backstroke();
@@ -1112,8 +1146,9 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.keydown_checker = function(evt) {
-      var stroke, _ref;
-      stroke = (_ref = evt.which) != null ? _ref : evt.keyCode;
+      var stroke, _ref1;
+
+      stroke = (_ref1 = evt.which) != null ? _ref1 : evt.keyCode;
       this.search_field_scale();
       if (stroke !== 8 && this.pending_backstroke) {
         this.clear_backstroke();
@@ -1143,6 +1178,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.search_field_scale = function() {
       var div, h, style, style_block, styles, w, _i, _len;
+
       if (this.is_multiple) {
         h = 0;
         w = 0;

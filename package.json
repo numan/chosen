@@ -5,7 +5,7 @@
   "description": "Fork - Chosen is a JavaScript plugin that makes long, unwieldy select boxes much more user-friendly. It is currently available in both jQuery and Prototype flavors.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/maxparm/chosen"
+    "url": "https://github.com/numan/chosen"
   },
   "engines": {
     "node": ">=0.4.0"
