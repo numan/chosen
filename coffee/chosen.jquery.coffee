@@ -335,7 +335,7 @@ class Chosen extends AbstractChosen
     if @result_highlight
       high = @result_highlight
 
-      if high.hasClass 'create-option'
+      if high.hasClass "create-option"
         this.select_create_option(@search_field.val())
         return this.results_hide()
       
@@ -457,10 +457,13 @@ class Chosen extends AbstractChosen
             this.result_deactivate result
 
     if results < 1 and searchText.length
-      this.no_results searchText
+      this.no_results searchText unless @create_option and @skip_no_results
     else
       this.show_create_option( searchText ) if @create_option and not exact_result and @persistent_create_option and searchText.length
       this.winnow_results_set_highlight()
+
+    if @create_option and (results < 1 or (!exact_result and @persistent_create_option)) and searchText.length
+      this.show_create_option( searchText )
 
   winnow_results_clear: ->
     @search_field.val ""

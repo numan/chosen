@@ -143,7 +143,8 @@ Copyright (c) 2011 by Harvest
       this.max_selected_options = this.options.max_selected_options || Infinity;
       this.inherit_select_classes = this.options.inherit_select_classes || false;
       this.create_option = this.options.create_option || false;
-      return this.persistent_create_option = this.options.persistent_create_option || false;
+      this.persistent_create_option = this.options.persistent_create_option || false;
+      return this.skip_no_results = this.options.skip_no_results || false;
     };
 
     AbstractChosen.prototype.set_default_text = function() {
@@ -155,7 +156,7 @@ Copyright (c) 2011 by Harvest
         this.default_text = this.options.placeholder_text_single || this.options.placeholder_text || AbstractChosen.default_single_text;
       }
       this.results_none_found = this.form_field.getAttribute("data-no_results_text") || this.options.no_results_text || AbstractChosen.default_no_result_text;
-      return this.create_option_text = this.options.create_option_text || "Add option";
+      return this.create_option_text = this.form_field.getAttribute("data-create_option_text") || this.options.create_option_text || AbstractChosen.default_create_option_text;
     };
 
     AbstractChosen.prototype.mouse_enter = function() {
@@ -321,6 +322,8 @@ Copyright (c) 2011 by Harvest
     AbstractChosen.default_single_text = "Select an Option";
 
     AbstractChosen.default_no_result_text = "No results match";
+
+    AbstractChosen.default_create_option_text = "Add Option";
 
     return AbstractChosen;
 
@@ -675,10 +678,10 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.set_tab_index = function(el) {
       var ti;
-      if (this.form_field_jq.prop("tabindex")) {
-        ti = this.form_field_jq.prop("tabindex");
-        this.form_field_jq.prop("tabindex", -1);
-        return this.search_field.prop("tabindex", ti);
+      if (this.form_field_jq.attr("tabindex")) {
+        ti = this.form_field_jq.attr("tabindex");
+        this.form_field_jq.attr("tabindex", -1);
+        return this.search_field.attr("tabindex", ti);
       }
     };
 
@@ -765,7 +768,7 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.choice_destroy = function(link) {
-      if (this.result_deselect(link.prop("rel"))) {
+      if (this.result_deselect(link.attr("rel"))) {
         this.choices -= 1;
         this.show_search_field_default();
         if (this.is_multiple && this.choices > 0 && this.search_field.val().length < 1) {
@@ -799,11 +802,11 @@ Copyright (c) 2011 by Harvest
       var high, high_id, item, position;
       if (this.result_highlight) {
         high = this.result_highlight;
-        if (high.hasClass('create-option')) {
+        if (high.hasClass("create-option")) {
           this.select_create_option(this.search_field.val());
           return this.results_hide();
         }
-        high_id = high.prop("id");
+        high_id = high.attr("id");
         this.result_clear_highlight();
         if (this.is_multiple) {
           this.result_deactivate(high);
@@ -874,17 +877,16 @@ Copyright (c) 2011 by Harvest
     };
 
     Chosen.prototype.winnow_results = function() {
-      var eregex, exact_result, found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, selected, startpos, text, zregex, _i, _j, _len, _len1, _ref;
+      var eregex, exact_result, found, option, part, parts, regex, regexAnchor, result, result_id, results, searchText, startpos, text, zregex, _i, _j, _len, _len1, _ref;
       this.no_results_clear();
       this.create_option_clear();
       results = 0;
-      selected = false;
+      exact_result = false;
       searchText = this.search_field.val() === this.default_text ? "" : $('<div/>').text($.trim(this.search_field.val())).html();
       regexAnchor = this.search_contains ? "" : "^";
       regex = new RegExp(regexAnchor + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
       zregex = new RegExp(searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), 'i');
       eregex = new RegExp('^' + searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") + '$', 'i');
-      exact_result = false;
       _ref = this.results_data;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         option = _ref[_i];
@@ -927,7 +929,7 @@ Copyright (c) 2011 by Harvest
                 $("#" + this.results_data[option.group_array_index].dom_id).css('display', 'list-item');
               }
             } else {
-              if (this.result_highlight && result_id === this.result_highlight.prop('id')) {
+              if (this.result_highlight && result_id === this.result_highlight.attr('id')) {
                 this.result_clear_highlight();
               }
               this.result_deactivate(result);
@@ -936,12 +938,14 @@ Copyright (c) 2011 by Harvest
         }
       }
       if (results < 1 && searchText.length) {
-        return this.no_results(searchText);
-      } else {
-        if (this.create_option && !exact_result && this.persistent_create_option && searchText.length) {
-          this.show_create_option(searchText);
+        if (!(this.create_option && this.skip_no_results)) {
+          this.no_results(searchText);
         }
-        return this.winnow_results_set_highlight();
+      } else {
+        this.winnow_results_set_highlight();
+      }
+      if (this.create_option && (results < 1 || (!exact_result && this.persistent_create_option)) && searchText.length) {
+        return this.show_create_option(searchText);
       }
     };
 
@@ -979,10 +983,7 @@ Copyright (c) 2011 by Harvest
       var no_results_html;
       no_results_html = $('<li class="no-results">' + this.results_none_found + ' "<span></span>"</li>');
       no_results_html.find("span").first().html(terms);
-      this.search_results.append(no_results_html);
-      if (this.create_option) {
-        return this.show_create_option(terms);
-      }
+      return this.search_results.append(no_results_html);
     };
 
     Chosen.prototype.show_create_option = function(terms) {
@@ -1008,7 +1009,7 @@ Copyright (c) 2011 by Harvest
 
     Chosen.prototype.select_append_option = function(options) {
       var option, terms;
-      option = $('<option />', options).prop('selected', 'selected');
+      option = $('<option />', options).attr('selected', 'selected');
       this.form_field_jq.append(option);
       terms = this.search_field.val();
       this.form_field_jq.trigger("liszt:updated");
